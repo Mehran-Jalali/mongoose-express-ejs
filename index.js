@@ -35,8 +35,14 @@ const categories = ["fruit", "vegetable", "dairy", "fungus"];
 
 //-----------------Showing products------------------
 app.get("/products", async (req, res) => {
-  const products = await Product.find({});
-  res.render("products/index", { products, categories });
+  const { category } = req.query;
+  if (category) {
+    const products = await Product.find({ category });
+    res.render("products/index", { products, category, categories });
+  } else {
+    const products = await Product.find({});
+    res.render("products/index", { products, category: "All", categories });
+  }
 });
 
 //-----------------Adding new product------------------
@@ -73,7 +79,13 @@ app.put("/products/:id", async (req, res) => {
   });
   res.redirect(`/products/${product._id}`);
 });
-//-----------------Updating products------------------
+//-----------------Deleting products------------------
+app.delete("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  await Product.findByIdAndDelete(id);
+  res.redirect(`/products`);
+});
+
 app.listen(3000, () => {
   console.log(`Listening On Port 3000`);
 });
