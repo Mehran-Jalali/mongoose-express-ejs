@@ -87,6 +87,11 @@ app.delete("/products/:id", async (req, res) => {
   res.redirect(`/products`);
 });
 
+app.use((err, req, res, next) => {
+  const { status = 500, message = `Something went wrong` } = err;
+  res.status(status).send(message);
+});
+
 app.listen(3000, () => {
   console.log(`Listening On Port 3000`);
 });
